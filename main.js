@@ -40,37 +40,33 @@ if (toDos.length >= 2) {
   document.querySelector(".todosAllScroll").style.overflowY = "scroll";
 }
 const addToDo = () => {
-  if (input.value.trim().length >= 3 && input.value.trim().length <= 64) {
-    const titleRaven = () => {
-      for (let i = 0; i < toDos.length; i++) {
-        if (input.value.trim() == toDos[i].title) {
-          alert("Bu so'z oldin kiritilgan!");
-          break;
-        }
-      }
-    };
-    titleRaven();
-    let div = document.createElement("div");
-    div.setAttribute("class", "todo");
-    let date = new Date().getDate(),
-      month = new Date().getMonth() + 1,
-      year = new Date().getFullYear(),
-      hour = new Date().getHours(),
-      minute = new Date().getMinutes();
+  for (let i = 0; i < toDos.length; i++) {
+    if (input.value.trim() == toDos[i].title) {
+      alert("This ToDo name has already been added!");
+      break;
+    } else {
+      if (input.value.trim().length >= 3 && input.value.trim().length <= 64) {
+        let div = document.createElement("div");
+        div.setAttribute("class", "todo");
+        let date = new Date().getDate(),
+          month = new Date().getMonth() + 1,
+          year = new Date().getFullYear(),
+          hour = new Date().getHours(),
+          minute = new Date().getMinutes();
 
-    const toDo = {
-      id: toDos.length,
-      title: input.value,
-      completed: false,
-      date: `${date}.${
-        month < 10 ? "0" + month : month
-      }.${year} ${hour}:${minute}`,
-    };
-    toDos.push(toDo);
-    localStorage.setItem("toDos", JSON.stringify(toDos));
-    div.id = toDo.id;
+        const toDo = {
+          id: toDos.length,
+          title: input.value,
+          completed: false,
+          date: `${date}.${
+            month < 10 ? "0" + month : month
+          }.${year} ${hour}:${minute}`,
+        };
+        toDos.push(toDo);
+        localStorage.setItem("toDos", JSON.stringify(toDos));
+        div.id = toDo.id;
 
-    div.innerHTML = `
+        div.innerHTML = `
     <h4>
         ${input.value}
     </h4>
@@ -81,22 +77,24 @@ const addToDo = () => {
         })">COMPLETE</button>
         <button class="delete" onclick="deleteToDo(${toDo.id})">DELETE</button>
         <h5 class="added">Inserted: ${date}.${
-      month < 10 ? "0" + month : month
-    }.${year} ${hour}:${minute}</h5>
+          month < 10 ? "0" + month : month
+        }.${year} ${hour}:${minute}</h5>
     </div>
   `;
 
-    toDoAll.append(div);
-    document.querySelector(".empty").style.display = "none";
-    document.querySelector(".btn-delete").style.display = "inline-block";
-    input.value = "";
-    document.querySelector(".todosAllScroll").style.height = "30vh";
-    document.querySelector(".todosAllScroll").style.overflowY = "scroll";
-  } else {
-    if (input.value.trim().length < 3) {
-      alert("Iltimos 3tadan ko'proq so'z kiriting");
-    } else {
-      alert("Iltimos qisqaroq so'z kiriting");
+        toDoAll.append(div);
+        document.querySelector(".empty").style.display = "none";
+        document.querySelector(".btn-delete").style.display = "inline-block";
+        input.value = "";
+        document.querySelector(".todosAllScroll").style.height = "30vh";
+        document.querySelector(".todosAllScroll").style.overflowY = "scroll";
+      } else {
+        if (input.value.trim().length < 3) {
+          alert("Please, enter at least 4 characters!");
+        } else {
+          alert("Please, enter maximum 64 characters!");
+        }
+      }
     }
   }
 };
@@ -171,6 +169,7 @@ const editToDo = (id) => {
       }
       modal.style.display = "none";
       overlay.style.display = "none";
+      localStorage.setItem("toDos", JSON.stringify(toDos));
     } else {
       if (input.value.trim().length < 3) {
         alert("Iltimos 3tadan ko'proq so'z kiriting");
