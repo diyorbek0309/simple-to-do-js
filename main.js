@@ -2,22 +2,25 @@ let input = document.querySelector("input");
 let toDoAll = document.getElementsByClassName("toDoWrap")[0];
 let toDos = JSON.parse(localStorage.getItem("toDos")) || [];
 
-
 const showToDo = () => {
   if (toDos.length) {
     for (let i = 0; i < toDos.length; i++) {
       let div = document.createElement("div");
       div.setAttribute("class", "todo");
       div.id = toDos[i].id;
-
+      console.log(toDos[i].completed);
       div.innerHTML = `
-    <h4>
+    <h4 style="${toDos[i].completed ? "text-decoration: line-through" : ""}">
         ${toDos[i].title}
     </h4>
     <div class="amal">
         <button class="edit" onclick="editToDo(${toDos[i].id})">EDIT</button>
-        <button class="complete" onclick="completeToDo(${toDos[i].id})">COMPLETE</button>
-        <button class="delete" onclick="deleteToDo(${toDos[i].id})">DELETE</button>
+        <button class="complete" onclick="completeToDo(${toDos[i].id})">${
+        toDos[i].completed ? "UNCOMPLETE" : "COMPLETE"
+      }</button>
+        <button class="delete" onclick="deleteToDo(${
+          toDos[i].id
+        })">DELETE</button>
         <h5 class="added">Inserted: ${toDos[i].date}</h5>
     </div>
   `;
@@ -28,11 +31,10 @@ const showToDo = () => {
     document.querySelector(".empty").style.display = "none";
     document.querySelector(".btn-delete").style.display = "inline-block";
   }
-  localStorage.clear()
 };
 
 showToDo();
-console.log(toDos.length);
+
 if (toDos.length >= 2) {
   document.querySelector(".todosAllScroll").style.height = "30vh";
   document.querySelector(".todosAllScroll").style.overflowY = "scroll";
@@ -89,7 +91,7 @@ const addToDo = () => {
     document.querySelector(".btn-delete").style.display = "inline-block";
     input.value = "";
     document.querySelector(".todosAllScroll").style.height = "30vh";
-  document.querySelector(".todosAllScroll").style.overflowY = "scroll";
+    document.querySelector(".todosAllScroll").style.overflowY = "scroll";
   } else {
     if (input.value.trim().length < 3) {
       alert("Iltimos 3tadan ko'proq so'z kiriting");
@@ -107,7 +109,6 @@ const completeToDo = (id) => {
         toDoAll.children[i].getElementsByClassName("complete")[0].innerText =
           "COMPLETE";
         toDos[i].completed = false;
-        console.log(toDos[i].id);
       } else {
         toDoAll.children[i].childNodes[1].style.textDecoration = "line-through";
         toDoAll.children[i].getElementsByClassName("complete")[0].innerText =
@@ -116,6 +117,7 @@ const completeToDo = (id) => {
       }
     }
   }
+  localStorage.setItem("toDos", JSON.stringify(toDos));
   toDos[id].completed = toDos[id].completed;
 };
 
@@ -123,13 +125,12 @@ const deleteToDo = (id) => {
   for (let i = 0; i < toDoAll.children.length; i++) {
     if (id == toDoAll.children[i].id) {
       toDoAll.children[i].remove();
-      toDos = toDos.filter((index) => {
-        return index !== i;
-      });
+      toDos = toDos.filter((toDo) => toDo.id !== i);
       break;
     }
   }
 
+  localStorage.setItem("toDos", JSON.stringify(toDos));
   if (toDoAll.children.length === 0) {
     document.querySelector(".empty").style.display = "block";
     document.querySelector(".btn-delete").style.display = "none";
@@ -144,7 +145,7 @@ const deleteAll = () => {
   document.querySelector(".btn-delete").style.display = "none";
   document.querySelector(".todosAllScroll").style.height = "auto";
   document.querySelector(".todosAllScroll").style.overflowY = "auto";
-  localStorage.clear()
+  localStorage.clear();
 };
 
 const editToDo = (id) => {
@@ -155,11 +156,6 @@ const editToDo = (id) => {
   let cancel_btn = document.getElementById("edit_cancel");
   let input = document.getElementById("edit_input"),
     overlay = document.getElementById("overlay");
-  console.log(toDos);
-  console.log(toDos[id]);
-  // if(id == undefined){
-  //   id = 0
-  // }
   input.value = toDos[id].title;
 
   modal.style.display = "block";
